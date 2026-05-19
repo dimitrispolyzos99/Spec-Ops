@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		56B3E6CD2FBB96B30093BF60 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5657214E2FB4DD41007D140D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 565721552FB4DD41007D140D;
+			remoteInfo = "Spec-Ops";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		565721562FB4DD41007D140D /* Spec-Ops.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Spec-Ops.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		56B3E6C92FBB96B30093BF60 /* Spec-OpsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spec-OpsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -29,10 +40,22 @@
 			path = "Spec-Ops";
 			sourceTree = "<group>";
 		};
+		56B3E6CA2FBB96B30093BF60 /* Spec-OpsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Spec-OpsTests";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		565721532FB4DD41007D140D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		56B3E6C62FBB96B30093BF60 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				565721582FB4DD41007D140D /* Spec-Ops */,
+				56B3E6CA2FBB96B30093BF60 /* Spec-OpsTests */,
 				565721572FB4DD41007D140D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				565721562FB4DD41007D140D /* Spec-Ops.app */,
+				56B3E6C92FBB96B30093BF60 /* Spec-OpsTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,6 +108,29 @@
 			productReference = 565721562FB4DD41007D140D /* Spec-Ops.app */;
 			productType = "com.apple.product-type.application";
 		};
+		56B3E6C82FBB96B30093BF60 /* Spec-OpsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 56B3E6D12FBB96B30093BF60 /* Build configuration list for PBXNativeTarget "Spec-OpsTests" */;
+			buildPhases = (
+				56B3E6C52FBB96B30093BF60 /* Sources */,
+				56B3E6C62FBB96B30093BF60 /* Frameworks */,
+				56B3E6C72FBB96B30093BF60 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				56B3E6CE2FBB96B30093BF60 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				56B3E6CA2FBB96B30093BF60 /* Spec-OpsTests */,
+			);
+			name = "Spec-OpsTests";
+			packageProductDependencies = (
+			);
+			productName = "Spec-OpsTests";
+			productReference = 56B3E6C92FBB96B30093BF60 /* Spec-OpsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -90,11 +138,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2640;
-				LastUpgradeCheck = 2640;
+				LastSwiftUpdateCheck = 2650;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					565721552FB4DD41007D140D = {
 						CreatedOnToolsVersion = 26.4.1;
+					};
+					56B3E6C82FBB96B30093BF60 = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = 565721552FB4DD41007D140D;
 					};
 				};
 			};
@@ -113,12 +165,20 @@
 			projectRoot = "";
 			targets = (
 				565721552FB4DD41007D140D /* Spec-Ops */,
+				56B3E6C82FBB96B30093BF60 /* Spec-OpsTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		565721542FB4DD41007D140D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		56B3E6C72FBB96B30093BF60 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +195,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		56B3E6C52FBB96B30093BF60 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		56B3E6CE2FBB96B30093BF60 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 565721552FB4DD41007D140D /* Spec-Ops */;
+			targetProxy = 56B3E6CD2FBB96B30093BF60 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		5657216A2FB4DD46007D140D /* Debug */ = {
@@ -150,7 +225,6 @@
 				INFOPLIST_FILE = "Spec-Ops/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -182,7 +256,6 @@
 				INFOPLIST_FILE = "Spec-Ops/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -261,6 +334,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -318,8 +392,53 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		56B3E6CF2FBB96B30093BF60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YCBA6PK5AD;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Dimitris-Polyzos.Spec-OpsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Spec-Ops.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Spec-Ops";
+			};
+			name = Debug;
+		};
+		56B3E6D02FBB96B30093BF60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YCBA6PK5AD;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Dimitris-Polyzos.Spec-OpsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Spec-Ops.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Spec-Ops";
 			};
 			name = Release;
 		};
@@ -340,6 +459,15 @@
 			buildConfigurations = (
 				5657216A2FB4DD46007D140D /* Debug */,
 				5657216B2FB4DD46007D140D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		56B3E6D12FBB96B30093BF60 /* Build configuration list for PBXNativeTarget "Spec-OpsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56B3E6CF2FBB96B30093BF60 /* Debug */,
+				56B3E6D02FBB96B30093BF60 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
