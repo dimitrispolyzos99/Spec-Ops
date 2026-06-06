@@ -1,0 +1,4 @@
+# Xcode user & scheme files (περιέχουν env vars / secrets)
+*.xcscheme
+xcuserdata/
+.DS_Store
