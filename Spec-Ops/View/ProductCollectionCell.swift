@@ -17,6 +17,8 @@ class ProductCollectionCell: UICollectionViewCell {
     private let ratingLabel = UILabel()
     private let badgeLabel = PaddedLabel()
     private let matchLabel = UILabel()
+    private let productImageView = UIImageView()
+    private var currentImageURL: String?
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -64,7 +66,8 @@ class ProductCollectionCell: UICollectionViewCell {
     private func setupLabels() {
         nameLabel.font = UIFont.systemFont(ofSize: 12, weight: .bold)
         nameLabel.textColor = AppColors.primaryText
-        nameLabel.numberOfLines = 3
+        nameLabel.numberOfLines = 2
+        nameLabel.lineBreakMode = .byTruncatingTail
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
 
         categoryLabel.font = UIFont.systemFont(ofSize: 10, weight: .medium)
@@ -90,6 +93,12 @@ class ProductCollectionCell: UICollectionViewCell {
         matchLabel.textColor = AppColors.accent
         matchLabel.textAlignment = .right
         matchLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        productImageView.contentMode = .scaleAspectFill
+        productImageView.clipsToBounds = true          // να μη βγαίνει έξω η εικόνα
+        productImageView.layer.cornerRadius = 8
+        productImageView.backgroundColor = .clear
+        productImageView.translatesAutoresizingMaskIntoConstraints = false
 
         contentView.addSubview(nameLabel)
         contentView.addSubview(categoryLabel)
@@ -97,18 +106,19 @@ class ProductCollectionCell: UICollectionViewCell {
         contentView.addSubview(ratingLabel)
         contentView.addSubview(badgeLabel)
         contentView.addSubview(matchLabel)
+        contentView.addSubview(productImageView)
     }
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
 
-            iconImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-            iconImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            iconImageView.centerXAnchor.constraint(equalTo: productImageView.centerXAnchor),
+            iconImageView.centerYAnchor.constraint(equalTo: productImageView.centerYAnchor),
             iconImageView.widthAnchor.constraint(equalToConstant: 48),
             iconImageView.heightAnchor.constraint(equalToConstant: 48),
 
-            // Name
-            nameLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 12),
+
+            nameLabel.topAnchor.constraint(equalTo: productImageView.bottomAnchor, constant: 10),
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
 
@@ -116,6 +126,7 @@ class ProductCollectionCell: UICollectionViewCell {
             categoryLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             categoryLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
 
+            priceLabel.topAnchor.constraint(greaterThanOrEqualTo: categoryLabel.bottomAnchor, constant: 8),
             priceLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -14),
             priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             
@@ -126,7 +137,12 @@ class ProductCollectionCell: UICollectionViewCell {
             badgeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             
             matchLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            matchLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10)
+            matchLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            
+            productImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            productImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            productImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            productImageView.heightAnchor.constraint(equalToConstant: 120),
         ])
     }
 
@@ -159,5 +175,24 @@ class ProductCollectionCell: UICollectionViewCell {
         } else {
             matchLabel.text = ""
         }
+        
+
+        currentImageURL = product.name
+
+        Task {
+            let urlString = try? await NetworkManager.shared.fetchProductImage(query: product.name)
+            guard let urlString else { return }
+            let image = await ImageLoader.shared.loadImage(from: urlString)
+            guard currentImageURL == product.name else { return }
+            productImageView.image = image
+            iconImageView.isHidden = (image != nil)
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        productImageView.image = nil
+        currentImageURL = nil
+        iconImageView.isHidden = false
     }
 }

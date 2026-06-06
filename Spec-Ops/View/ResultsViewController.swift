@@ -62,7 +62,7 @@ nonisolated enum ResultsSection: Hashable {
         // Group: 100% πλάτος, fixed ύψος, περιέχει 2 items
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(210)
+            heightDimension: .absolute(240)
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
