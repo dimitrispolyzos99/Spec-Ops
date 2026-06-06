@@ -16,7 +16,7 @@ class ProductCollectionCell: UICollectionViewCell {
     private let priceLabel = UILabel()
     private let ratingLabel = UILabel()
     private let badgeLabel = PaddedLabel()
-    private let matchLabel = UILabel()
+    private let matchLabel = PaddedLabel()
     private let productImageView = UIImageView()
     private var currentImageURL: String?
 
@@ -91,6 +91,9 @@ class ProductCollectionCell: UICollectionViewCell {
         
         matchLabel.font = UIFont.systemFont(ofSize: 13, weight: .bold)
         matchLabel.textColor = AppColors.accent
+        matchLabel.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        matchLabel.layer.cornerRadius = 6
+        matchLabel.clipsToBounds = true
         matchLabel.textAlignment = .right
         matchLabel.translatesAutoresizingMaskIntoConstraints = false
         
@@ -100,13 +103,13 @@ class ProductCollectionCell: UICollectionViewCell {
         productImageView.backgroundColor = .clear
         productImageView.translatesAutoresizingMaskIntoConstraints = false
 
+        contentView.addSubview(productImageView)
         contentView.addSubview(nameLabel)
         contentView.addSubview(categoryLabel)
         contentView.addSubview(priceLabel)
         contentView.addSubview(ratingLabel)
         contentView.addSubview(badgeLabel)
         contentView.addSubview(matchLabel)
-        contentView.addSubview(productImageView)
     }
 
     private func setupConstraints() {
