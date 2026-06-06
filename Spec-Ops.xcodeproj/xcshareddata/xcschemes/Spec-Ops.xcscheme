@@ -73,7 +73,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "GROQ_API_KEY"
-            value = "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"
+            value = "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"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable

@@ -13,5 +13,9 @@ nonisolated struct Product: Decodable, Hashable, Sendable {
     let category: String
     let price: String
     let description: String
+    let rating: Double?
+    let reviewCount: Int?
+    let badge: ProductBadge?
+    let matchScore: Int?
 }
 

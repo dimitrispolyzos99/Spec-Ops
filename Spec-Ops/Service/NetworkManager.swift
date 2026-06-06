@@ -48,7 +48,11 @@ final class NetworkManager {
                     - Suggest products that best match ALL requirements mentioned by the user.
                     - Use European pricing in EUR, always include the € symbol in the price field.
                     - Format strictly:
-                    [{"name":"...","category":"...","price":"€...","description":"..."}]
+                    [{"name":"...","category":"...","price":"€...","description":"...","rating":4.7,"reviewCount":1245,"matchScore":92,"badge":"bestOverall"}]
+                    - rating: a number 0.0 to 5.0 (one decimal).
+                    - reviewCount: a realistic integer.
+                    - matchScore: integer 0 to 100, how well THIS product fits the user's query. The best match should be highest.
+                    - badge: ONLY one of these exact strings, or omit the field entirely: "bestOverall", "bestPerformance", "bestValue", "bestDisplay". Assign each badge to at most ONE product. Most products should have NO badge.
                     - Min 4 items. Description should be one concise sentence explaining why it fits the user's needs.
                     - Max 8 items
                     """),
@@ -64,6 +68,7 @@ final class NetworkManager {
         
         let (data, response) = try await URLSession.shared.data(for: request)
         
+        
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
             throw NetworkError.invalidResponse
@@ -75,13 +80,19 @@ final class NetworkManager {
             throw NetworkError.decodingFailed
         }
         
-        guard let jsonData = content.data(using: .utf8),
-              let products = try? JSONDecoder().decode([Product].self, from: jsonData) else {
+        guard let jsonData = content.data(using: .utf8) else {
             throw NetworkError.decodingFailed
         }
-        try await Task.sleep(nanoseconds: 2_000_000_000)
-        
-        return products
+
+        do {
+            let products = try JSONDecoder().decode([Product].self, from: jsonData)
+            try await Task.sleep(nanoseconds: 2_000_000_000)
+            return products
+        } catch {
+            print("🔴 DECODING ERROR:", error)
+            print("🔴 RAW JSON:", String(data: jsonData, encoding: .utf8) ?? "nil")
+            throw NetworkError.decodingFailed
+        }
     }
     func fetchProductImage(query: String) async throws -> String {
         let accessKey = ProcessInfo.processInfo.environment["UNSPLASH_API_KEY"] ?? ""

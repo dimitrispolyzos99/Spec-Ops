@@ -14,6 +14,9 @@ class ProductCollectionCell: UICollectionViewCell {
     private let nameLabel = UILabel()
     private let categoryLabel = UILabel()
     private let priceLabel = UILabel()
+    private let ratingLabel = UILabel()
+    private let badgeLabel = PaddedLabel()
+    private let matchLabel = UILabel()
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -60,27 +63,45 @@ class ProductCollectionCell: UICollectionViewCell {
 
     private func setupLabels() {
         nameLabel.font = UIFont.systemFont(ofSize: 12, weight: .bold)
-        nameLabel.textColor = .label
+        nameLabel.textColor = AppColors.primaryText
         nameLabel.numberOfLines = 3
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        // Category — pill style
         categoryLabel.font = UIFont.systemFont(ofSize: 10, weight: .medium)
         categoryLabel.textColor = AppColors.accent
         categoryLabel.translatesAutoresizingMaskIntoConstraints = false
 
         priceLabel.font = UIFont.systemFont(ofSize: 16, weight: .black)
-        priceLabel.textColor = .label
+        priceLabel.textColor = AppColors.primaryText
         priceLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        ratingLabel.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
+        ratingLabel.textColor = AppColors.secondaryText
+        ratingLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        badgeLabel.font = UIFont.systemFont(ofSize: 10, weight: .bold)
+        badgeLabel.textColor = .white
+        badgeLabel.backgroundColor = AppColors.accent
+        badgeLabel.layer.cornerRadius = 6
+        badgeLabel.clipsToBounds = true
+        badgeLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        matchLabel.font = UIFont.systemFont(ofSize: 13, weight: .bold)
+        matchLabel.textColor = AppColors.accent
+        matchLabel.textAlignment = .right
+        matchLabel.translatesAutoresizingMaskIntoConstraints = false
 
         contentView.addSubview(nameLabel)
         contentView.addSubview(categoryLabel)
         contentView.addSubview(priceLabel)
+        contentView.addSubview(ratingLabel)
+        contentView.addSubview(badgeLabel)
+        contentView.addSubview(matchLabel)
     }
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Icon — centered στην κορυφή
+
             iconImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
             iconImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             iconImageView.widthAnchor.constraint(equalToConstant: 48),
@@ -91,22 +112,52 @@ class ProductCollectionCell: UICollectionViewCell {
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
 
-            // Category
             categoryLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
             categoryLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             categoryLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
 
-            // Price — κολλητά στο κάτω μέρος
             priceLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -14),
-            priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12)
+            priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            
+            ratingLabel.centerYAnchor.constraint(equalTo: priceLabel.centerYAnchor),
+            ratingLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            
+            badgeLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            badgeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            
+            matchLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            matchLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10)
         ])
     }
 
     // MARK: - Configure
     func configure(with product: Product) {
+        
         nameLabel.text = product.name
+        
         categoryLabel.text = product.category.uppercased()
+        
         priceLabel.text = product.price
+        
         iconImageView.image = UIImage(systemName: CategoryIcon.iconName(for: product.category))
+        
+        if let rating = product.rating {
+            ratingLabel.text = "★ \(rating)"
+        } else {
+            ratingLabel.text = ""
+        }
+        
+        if let badge = product.badge {
+            badgeLabel.text = badge.displayTitle
+            badgeLabel.isHidden = false
+        } else {
+            badgeLabel.isHidden = true
+        }
+        
+        if let score = product.matchScore {
+            matchLabel.text = "\(score)%"
+        } else {
+            matchLabel.text = ""
+        }
     }
 }
