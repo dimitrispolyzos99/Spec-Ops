@@ -57,7 +57,7 @@ final class HeroCell: UICollectionViewCell {
         // Subtitle
         subtitleLabel.text = "AI-powered hardware advisor"
         subtitleLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        subtitleLabel.textColor = AppColors.accent.withAlphaComponent(0.5)
+        subtitleLabel.textColor = UIColor.white.withAlphaComponent(0.85)
         subtitleLabel.textAlignment = .center
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(subtitleLabel)
@@ -116,6 +116,7 @@ final class HeroCell: UICollectionViewCell {
         guard let searchIcon = searchContainer.subviews.first as? UIImageView else { return }
 
         NSLayoutConstraint.activate([
+            
             logoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             logoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 60),
             logoImageView.widthAnchor.constraint(equalToConstant: 80),
