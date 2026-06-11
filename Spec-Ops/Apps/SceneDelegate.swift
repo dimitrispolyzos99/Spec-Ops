@@ -15,13 +15,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
-        
+
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
+
         window = UIWindow(windowScene: windowScene)
-        let rootVC = HomeViewController()
-        let navigationController = UINavigationController(rootViewController: rootVC)
-        window?.rootViewController = navigationController
+
+        let homeNav = UINavigationController(rootViewController: HomeViewController())
+        homeNav.tabBarItem = UITabBarItem(
+            title: "Home",
+            image: UIImage(systemName: "house"),
+            selectedImage: UIImage(systemName: "house.fill")
+        )
+
+        let favoritesNav = UINavigationController(rootViewController: FavoritesViewController())
+        favoritesNav.tabBarItem = UITabBarItem(
+            title: "Favorites",
+            image: UIImage(systemName: "heart"),
+            selectedImage: UIImage(systemName: "heart.fill")
+        )
+
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [homeNav, favoritesNav]
+        tabBarController.tabBar.tintColor = UIColor.systemOrange
+
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
 

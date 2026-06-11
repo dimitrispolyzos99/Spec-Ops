@@ -25,6 +25,7 @@ class DetailViewController: UIViewController {
     private let descriptionTitleLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let activityIndicator = UIActivityIndicatorView(style: .medium)
+    private let favoriteButton = UIButton(type: .system)
  
     // MARK: - Init
     init(product: Product) {
@@ -126,6 +127,15 @@ class DetailViewController: UIViewController {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(descriptionLabel)
+        
+        // Favorite button
+        favoriteButton.tintColor = AppColors.accent
+        favoriteButton.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        favoriteButton.layer.cornerRadius = 20
+        favoriteButton.clipsToBounds = true
+        favoriteButton.addTarget(self, action: #selector(favoriteTapped), for: .touchUpInside)
+        favoriteButton.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(favoriteButton)
     }
  
     // MARK: - Setup Constraints
@@ -192,7 +202,13 @@ class DetailViewController: UIViewController {
             descriptionLabel.topAnchor.constraint(equalTo: descriptionTitleLabel.bottomAnchor, constant: 12),
             descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -40)
+            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -40),
+            
+            //Favorite Button
+            favoriteButton.topAnchor.constraint(equalTo: productImageView.topAnchor, constant: 12),
+            favoriteButton.trailingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: -12),
+            favoriteButton.widthAnchor.constraint(equalToConstant: 40),
+            favoriteButton.heightAnchor.constraint(equalToConstant: 40),
         ])
     }
  
@@ -202,6 +218,7 @@ class DetailViewController: UIViewController {
         categoryLabel.text = product.category.uppercased()
         priceLabel.text = product.price
         descriptionLabel.text = product.description
+        updateFavoriteButton()
  
         // Rating + reviews
         if let rating = product.rating {
@@ -221,6 +238,18 @@ class DetailViewController: UIViewController {
         } else {
             matchLabel.isHidden = true
         }
+    }
+    
+    private func updateFavoriteButton() {
+        let isFav = FavoritesManager.shared.isFavorite(product)
+        let imageName = isFav ? "heart.fill" : "heart"
+        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
+        favoriteButton.setImage(UIImage(systemName: imageName, withConfiguration: config), for: .normal)
+    }
+
+    @objc private func favoriteTapped() {
+        FavoritesManager.shared.toggle(product)
+        updateFavoriteButton()
     }
  
     // MARK: - Fetch Image

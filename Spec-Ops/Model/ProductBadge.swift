@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum ProductBadge: String, Decodable {
+enum ProductBadge: String, Codable {
     case bestOverall
     case bestPerformance
     case bestValue

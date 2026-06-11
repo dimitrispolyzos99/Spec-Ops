@@ -8,7 +8,7 @@
 import Foundation
 
 
-nonisolated struct Product: Decodable, Hashable, Sendable {
+nonisolated struct Product: Codable, Hashable, Sendable {
     let name: String
     let category: String
     let price: String
@@ -18,4 +18,3 @@ nonisolated struct Product: Decodable, Hashable, Sendable {
     let badge: ProductBadge?
     let matchScore: Int?
 }
-

@@ -19,6 +19,8 @@ class ProductCollectionCell: UICollectionViewCell {
     private let matchLabel = PaddedLabel()
     private let productImageView = UIImageView()
     private var currentImageURL: String?
+    private let favoriteButton = UIButton(type: .system)
+    private var product: Product?
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -98,10 +100,18 @@ class ProductCollectionCell: UICollectionViewCell {
         matchLabel.translatesAutoresizingMaskIntoConstraints = false
         
         productImageView.contentMode = .scaleAspectFill
-        productImageView.clipsToBounds = true          // να μη βγαίνει έξω η εικόνα
+        productImageView.clipsToBounds = true
         productImageView.layer.cornerRadius = 8
         productImageView.backgroundColor = .clear
         productImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        favoriteButton.tintColor = AppColors.accent
+        favoriteButton.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        favoriteButton.layer.cornerRadius = 16
+        favoriteButton.clipsToBounds = true
+        favoriteButton.addTarget(self, action: #selector(favoriteTapped), for: .touchUpInside)
+        favoriteButton.translatesAutoresizingMaskIntoConstraints = false
+        
 
         contentView.addSubview(productImageView)
         contentView.addSubview(nameLabel)
@@ -110,6 +120,7 @@ class ProductCollectionCell: UICollectionViewCell {
         contentView.addSubview(ratingLabel)
         contentView.addSubview(badgeLabel)
         contentView.addSubview(matchLabel)
+        contentView.addSubview(favoriteButton)
     }
 
     private func setupConstraints() {
@@ -146,18 +157,34 @@ class ProductCollectionCell: UICollectionViewCell {
             productImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             productImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             productImageView.heightAnchor.constraint(equalToConstant: 120),
+            
+            favoriteButton.bottomAnchor.constraint(equalTo: productImageView.bottomAnchor, constant: -8),
+            favoriteButton.trailingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: -8),
+            favoriteButton.widthAnchor.constraint(equalToConstant: 32),
+            favoriteButton.heightAnchor.constraint(equalToConstant: 32),
         ])
+    }
+    
+    private func updateFavoriteButton() {
+        guard let product else { return }
+        let isFav = FavoritesManager.shared.isFavorite(product)
+        let imageName = isFav ? "heart.fill" : "heart"
+        let config = UIImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+        favoriteButton.setImage(UIImage(systemName: imageName, withConfiguration: config), for: .normal)
+    }
+
+    @objc private func favoriteTapped() {
+        guard let product else { return }
+        FavoritesManager.shared.toggle(product)
+        updateFavoriteButton()
     }
 
     // MARK: - Configure
     func configure(with product: Product) {
-        
+        self.product = product
         nameLabel.text = product.name
-        
         categoryLabel.text = product.category.uppercased()
-        
         priceLabel.text = product.price
-        
         iconImageView.image = UIImage(systemName: CategoryIcon.iconName(for: product.category))
         
         if let rating = product.rating {
@@ -178,10 +205,8 @@ class ProductCollectionCell: UICollectionViewCell {
         } else {
             matchLabel.text = ""
         }
-        
-
         currentImageURL = product.name
-
+        updateFavoriteButton()
         Task {
             let urlString = try? await NetworkManager.shared.fetchProductImage(query: product.name)
             guard let urlString else { return }
