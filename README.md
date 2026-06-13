@@ -1,117 +1,102 @@
 # Spec-Ops — AI-Powered Hardware Advisor
 
-> *Tell me what you need. I'll find the right tech for you.*
+Spec-Ops is an iOS app that helps users find the right tech hardware through natural-language search. Describe what you need ("a laptop for coding", "best value GPU") and an AI model returns tailored product recommendations with ratings, match scores, key features, specs, and pros & cons. Users can favorite products for later and compare several side by side.
 
----
-
-## Screenshots
-
-<p float="left">
-  <img src="Screenshots/Home.png" width="30%" />
-  <img src="Screenshots/Results.png" width="30%" />
-  <img src="Screenshots/Detail.png" width="30%" />
-</p>
-
----
-
-## What is Spec-Ops?
-
-Spec-Ops is a UIKit app that acts as your personal tech hardware advisor. You describe what you need in plain language — "laptop for video editing under €1500" — and the app uses an AI model to generate tailored product recommendations with European pricing, complete with product images pulled from Unsplash.
-
-Built entirely in UIKit without Storyboards — all layouts are done programmatically using Auto Layout.
+Built entirely in **UIKit, programmatically (no Storyboards)**, as a portfolio project focused on modern iOS patterns.
 
 ---
 
 ## Features
 
-- **AI Recommendations** — powered by Groq (Llama 3.3 70B) to generate hardware suggestions based on natural language input
-- **European Pricing** — all recommendations come with EUR pricing tailored for European customers
-- **Product Images** — each product detail page fetches a relevant image from the Unsplash API
-- **Programmatic UI** — zero Storyboards, all Auto Layout constraints written in code
-- **UICollectionView** — grid layout built with `CompositionalLayout` and `DiffableDataSource`
-- **MVVM Architecture** — `ResultsViewModel` handles all data fetching and state, keeping ViewControllers clean
-- **Async/Await** — all network calls use modern Swift concurrency
+- **AI-powered search** — natural-language queries return structured product recommendations via the Groq API (Llama 3.3).
+- **Rich product details** — each result includes rating, review count, AI match score, badges (Best Overall / Best Value / etc.), key features, specifications, and honest pros & cons.
+- **Product images** — fetched dynamically from the Unsplash API with in-memory caching.
+- **Favorites** — save products locally; persisted across launches with `UserDefaults` (Codable).
+- **Compare** — select up to 3 products and view them side by side in a comparison table.
+- **Curated home** — hero search, feature highlights, and tappable top categories.
+- **Tab bar navigation** — Home and Favorites tabs, each with its own navigation stack.
 
 ---
 
-## Tech Stack
+## Screenshots
 
-| Area | Technology |
-|---|---|
-| UI | UIKit (programmatic, no Storyboards) |
-| Architecture | MVVM |
-| AI | Groq API (Llama 3.3 70B) |
-| Images | Unsplash API |
-| Networking | URLSession + async/await |
-| Layout | Auto Layout + CompositionalLayout |
-| Data | DiffableDataSource |
+| Home | Results | Detail |
+|------|---------|--------|
+| ![Home](Screenshots/Home.png) | ![Results](Screenshots/Resaults.png) | ![Detail](Screenshots/Details.png) |
+
+| Favorites | Compare |
+|-----------|---------|
+| ![Favorites](Screenshots/Favourites.png) | ![Compare](Screenshots/Compare.png) |
 
 ---
 
-## Project Structure
+## Architecture & Tech
+
+- **UIKit, 100% programmatic** — Auto Layout in code, no Storyboards or XIBs.
+- **MVVM** — view models drive the results flow, keeping view controllers focused on UI.
+- **Diffable Data Source + Compositional Layout** — for the multi-section Home and the results grid.
+- **async/await** — modern Swift concurrency for all networking.
+- **Codable** — for decoding API responses and persisting favorites.
+- **Singletons for services** — `NetworkManager`, `ImageLoader`, `FavoritesManager`, `CompareManager`.
+- **Unit tests** — with the Swift Testing framework.
+
+### Project structure
 
 ```
 Spec-Ops/
-├── App/
-│   ├── AppDelegate.swift
-│   └── SceneDelegate.swift
-├── Model/
-│   ├── Product.swift
-│   ├── OpenAIRequest.swift
-│   └── UnsplashModels.swift
-├── View/
-│   ├── HomeViewController.swift
-│   ├── ResultsViewController.swift
-│   ├── DetailViewController.swift
-│   └── ProductCollectionCell.swift
-├── ViewModel/
-│   └── ResultsViewModel.swift
-└── Service/
-    ├── NetworkManager.swift
-    └── Constants.swift
+├── Apps/         AppDelegate, SceneDelegate
+├── Model/        Product, ProductBadge, API request/response models
+├── Service/      NetworkManager, ImageLoader, FavoritesManager,
+│                 CompareManager, Secrets, Constants
+├── View/         View controllers + custom cells/views
+└── ViewModel/    ResultsViewModel
 ```
 
 ---
 
-## Architecture Decisions
+## Setup
 
-**Why UIKit programmatically?**
-Storyboards hide what's actually happening under the hood. Writing constraints in code forces you to understand how Auto Layout works — and makes the code easier to review, diff, and maintain in a team.
+This project uses two APIs. You need your own free API keys to run it.
 
-**Why MVVM in UIKit?**
-`ResultsViewController` doesn't know how products are fetched — it just reacts to `onDataUpdated` and `onError` closures from `ResultsViewModel`. This separation makes the ViewController lightweight and the ViewModel independently testable.
+### 1. Get API keys
 
-**Why Groq?**
-Groq runs Llama 3.3 70B with very fast inference — response times are noticeably quicker than alternatives, which matters for a recommendation flow where the user is waiting.
+- **Groq** (for AI recommendations) — create a free key at [console.groq.com](https://console.groq.com).
+- **Unsplash** (for product images) — register an app at [unsplash.com/developers](https://unsplash.com/developers) and use the Access Key.
 
-**Why DiffableDataSource?**
-It handles cell updates with automatic diffing and smooth animations — no manual `reloadData()` calls or index path management.
+### 2. Add a `Secret.plist`
+
+Create a file named **`Secret.plist`** in the `Spec-Ops/` source folder with this content, and add it to the app target:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>GROQ_API_KEY</key>
+    <string>your_groq_key_here</string>
+    <key>UNSPLASH_API_KEY</key>
+    <string>your_unsplash_key_here</string>
+</dict>
+</plist>
+```
+
+> `Secret.plist` is listed in `.gitignore` and is never committed, so your keys stay private.
+
+### 3. Build & run
+
+Open `Spec-Ops.xcodeproj` in Xcode and run on a simulator or device (iOS 17+).
 
 ---
 
-## How It Works
+## Requirements
 
-1. User types a natural language query — e.g. "gaming laptop under €1200"
-2. `NetworkManager` sends the query to the Groq API with a system prompt that enforces JSON output
-3. The AI responds with a structured array of products (name, category, price, description)
-4. `ResultsViewModel` parses the response and notifies the ViewController via closure
-5. `DiffableDataSource` applies a snapshot and animates the cells in
-6. Tapping a product pushes `DetailViewController`, which fetches a relevant image from Unsplash
-
----
-
-## What I Learned Building This
-
-- **Programmatic Auto Layout** — no Storyboards, every constraint written manually. After fighting with ambiguous constraints for a while, I now understand exactly how the layout engine resolves conflicts.
-- **DiffableDataSource** — much cleaner than traditional DataSource. Once you understand snapshots, you never want to go back to `reloadData()`.
-- **Prompting for structured output** — getting an LLM to return clean JSON every time requires a precise system prompt. Small wording changes have a big impact on reliability.
-- **MVVM in UIKit with closures** — without `@Published` and `ObservableObject`, you wire ViewModels to ViewControllers manually via callbacks. It's more explicit — and actually clearer once you get used to it.
+- Xcode 16+
+- iOS 17+
+- A Groq API key and an Unsplash API key (free)
 
 ---
 
 ## Author
 
-**Dimitris Polyzos** — Self-taught iOS Developer, Athens, Greece
-
-- GitHub: [github.com/dimitrispolyzos99](https://github.com/dimitrispolyzos99)
-- LinkedIn: [linkedin.com/in/dimitris-polyzos-106373259](https://linkedin.com/in/dimitris-polyzos-106373259)
+**Dimitris Polyzos** — iOS Developer
+[GitHub](https://github.com/dimitrispolyzos99) · [LinkedIn](https://www.linkedin.com/in/dimitris-polyzos-106373259)

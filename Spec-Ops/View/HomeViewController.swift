@@ -231,7 +231,7 @@ nonisolated enum HomeItem: Hashable {
  
         snapshot.appendSections([.features])
         snapshot.appendItems([
-            .feature(icon: "sparkles", title: "AI Recommendations"),
+            .feature(icon: "sparkles", title: "AI Picks"),
             .feature(icon: "checkmark.shield", title: "Trusted Specs"),
             .feature(icon: "tag", title: "Best Prices")
         ], toSection: .features)
