@@ -26,6 +26,7 @@ class DetailViewController: UIViewController {
     private let descriptionLabel = UILabel()
     private let activityIndicator = UIActivityIndicatorView(style: .medium)
     private let favoriteButton = UIButton(type: .system)
+    private let sectionsStack = UIStackView()
  
     // MARK: - Init
     init(product: Product) {
@@ -136,6 +137,12 @@ class DetailViewController: UIViewController {
         favoriteButton.addTarget(self, action: #selector(favoriteTapped), for: .touchUpInside)
         favoriteButton.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(favoriteButton)
+        
+        // Sections stack (key features, specs, pros/cons)
+        sectionsStack.axis = .vertical
+        sectionsStack.spacing = 24
+        sectionsStack.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(sectionsStack)
     }
  
     // MARK: - Setup Constraints
@@ -202,13 +209,18 @@ class DetailViewController: UIViewController {
             descriptionLabel.topAnchor.constraint(equalTo: descriptionTitleLabel.bottomAnchor, constant: 12),
             descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -40),
             
             //Favorite Button
             favoriteButton.topAnchor.constraint(equalTo: productImageView.topAnchor, constant: 12),
             favoriteButton.trailingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: -12),
             favoriteButton.widthAnchor.constraint(equalToConstant: 40),
             favoriteButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            // Sections stack
+            sectionsStack.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 32),
+            sectionsStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+            sectionsStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
+            sectionsStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -40),
         ])
     }
  
@@ -238,6 +250,7 @@ class DetailViewController: UIViewController {
         } else {
             matchLabel.isHidden = true
         }
+        buildSections()
     }
     
     private func updateFavoriteButton() {
@@ -246,7 +259,7 @@ class DetailViewController: UIViewController {
         let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
         favoriteButton.setImage(UIImage(systemName: imageName, withConfiguration: config), for: .normal)
     }
-
+ 
     @objc private func favoriteTapped() {
         FavoritesManager.shared.toggle(product)
         updateFavoriteButton()
@@ -270,5 +283,119 @@ class DetailViewController: UIViewController {
                 }
             }
         }
+    }
+    // MARK: - Build dynamic sections
+    private func buildSections() {
+        // Key Features — λίστα με bullets
+        if let features = product.keyFeatures, !features.isEmpty {
+            let rows = features.map { "•  \($0)" }.joined(separator: "\n")
+            sectionsStack.addArrangedSubview(makeSection(title: "KEY FEATURES", body: rows))
+        }
+ 
+        // Specs — label/value σειρές
+        if let specs = product.specs, !specs.isEmpty {
+            sectionsStack.addArrangedSubview(makeSpecsSection(specs))
+        }
+ 
+        // Pros
+        if let pros = product.pros, !pros.isEmpty {
+            let rows = pros.map { "✓  \($0)" }.joined(separator: "\n")
+            sectionsStack.addArrangedSubview(makeSection(title: "PROS", body: rows, accent: true))
+        }
+ 
+        // Cons
+        if let cons = product.cons, !cons.isEmpty {
+            let rows = cons.map { "✗  \($0)" }.joined(separator: "\n")
+            sectionsStack.addArrangedSubview(makeSection(title: "CONS", body: rows))
+        }
+    }
+ 
+    // Γενική section: πορτοκαλί τίτλος + κείμενο σε frosted card
+    private func makeSection(title: String, body: String, accent: Bool = false) -> UIView {
+        let container = UIView()
+        container.backgroundColor = AppColors.cardBackground
+        container.layer.cornerRadius = 12
+ 
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+        titleLabel.textColor = AppColors.accent
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(titleLabel)
+ 
+        let bodyLabel = UILabel()
+        bodyLabel.text = body
+        bodyLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        bodyLabel.textColor = accent ? AppColors.primaryText : AppColors.secondaryText
+        bodyLabel.numberOfLines = 0
+        bodyLabel.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(bodyLabel)
+ 
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: container.topAnchor, constant: 14),
+            titleLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 14),
+            titleLabel.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -14),
+ 
+            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
+            bodyLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 14),
+            bodyLabel.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -14),
+            bodyLabel.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -14)
+        ])
+ 
+        return container
+    }
+ 
+    // Specs section: σειρές με label αριστερά, value δεξιά
+    private func makeSpecsSection(_ specs: [Spec]) -> UIView {
+        let container = UIView()
+        container.backgroundColor = AppColors.cardBackground
+        container.layer.cornerRadius = 12
+ 
+        let titleLabel = UILabel()
+        titleLabel.text = "SPECIFICATIONS"
+        titleLabel.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+        titleLabel.textColor = AppColors.accent
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(titleLabel)
+ 
+        let rowsStack = UIStackView()
+        rowsStack.axis = .vertical
+        rowsStack.spacing = 8
+        rowsStack.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(rowsStack)
+ 
+        for spec in specs {
+            let row = UIStackView()
+            row.axis = .horizontal
+            row.distribution = .fill
+ 
+            let label = UILabel()
+            label.text = spec.label
+            label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+            label.textColor = AppColors.secondaryText
+ 
+            let value = UILabel()
+            value.text = spec.value
+            value.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+            value.textColor = AppColors.primaryText
+            value.textAlignment = .right
+ 
+            row.addArrangedSubview(label)
+            row.addArrangedSubview(value)
+            rowsStack.addArrangedSubview(row)
+        }
+ 
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: container.topAnchor, constant: 14),
+            titleLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 14),
+            titleLabel.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -14),
+ 
+            rowsStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            rowsStack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 14),
+            rowsStack.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -14),
+            rowsStack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -14)
+        ])
+ 
+        return container
     }
 }
