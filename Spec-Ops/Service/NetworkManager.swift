@@ -29,7 +29,7 @@ final class NetworkManager {
     static let shared = NetworkManager()
     private init() {}
     
-    private let apiKey = ProcessInfo.processInfo.environment["GROQ_API_KEY"] ?? ""
+    private let apiKey = Secrets.groqAPIKey
     private let baseURL = "https://api.groq.com/openai/v1/chat/completions"
     
     func fetchProducts(query: String) async throws -> [Product] {
@@ -48,11 +48,15 @@ final class NetworkManager {
                     - Suggest products that best match ALL requirements mentioned by the user.
                     - Use European pricing in EUR, always include the € symbol in the price field.
                     - Format strictly:
-                    [{"name":"...","category":"...","price":"€...","description":"...","rating":4.7,"reviewCount":1245,"matchScore":92,"badge":"bestOverall"}]
+                    [{"name":"...","category":"...","price":"€...","description":"...","rating":4.7,"reviewCount":1245,"matchScore":92,"badge":"bestOverall","keyFeatures":["...","...","..."],"pros":["...","..."],"cons":["...","..."],"specs":[{"label":"CPU","value":"..."},{"label":"RAM","value":"..."}]}]
                     - rating: a number 0.0 to 5.0 (one decimal).
                     - reviewCount: a realistic integer.
                     - matchScore: integer 0 to 100, how well THIS product fits the user's query. The best match should be highest.
                     - badge: ONLY one of these exact strings, or omit the field entirely: "bestOverall", "bestPerformance", "bestValue", "bestDisplay". Assign each badge to at most ONE product. Most products should have NO badge.
+                    - keyFeatures: 3 to 4 short highlight strings (e.g. "16GB RAM", "144Hz display").
+                    - pros: 2 to 3 short advantages.
+                    - cons: 1 to 2 short drawbacks (be honest).
+                    - specs: 3 to 5 objects with "label" and "value" (e.g. CPU, RAM, Storage, Display, Battery). Keep values short.
                     - Min 4 items. Description should be one concise sentence explaining why it fits the user's needs.
                     - Max 8 items
                     """),
@@ -71,6 +75,10 @@ final class NetworkManager {
         
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
+            if let httpResponse = response as? HTTPURLResponse {
+                print("🔴 HTTP STATUS:", httpResponse.statusCode)
+                print("🔴 RESPONSE BODY:", String(data: data, encoding: .utf8) ?? "nil")
+            }
             throw NetworkError.invalidResponse
         }
         
@@ -95,8 +103,7 @@ final class NetworkManager {
         }
     }
     func fetchProductImage(query: String) async throws -> String {
-        let accessKey = ProcessInfo.processInfo.environment["UNSPLASH_API_KEY"] ?? ""
-        
+        let accessKey = Secrets.unsplashAPIKey
         // Encode το query για URL
         let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
         

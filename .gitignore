@@ -2,3 +2,5 @@
 *.xcscheme
 xcuserdata/
 .DS_Store
+Secret.plist
+Secrets.plist
