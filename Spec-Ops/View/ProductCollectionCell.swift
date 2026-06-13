@@ -7,8 +7,13 @@
 
 import UIKit
 
+protocol ProductCellDelegate: AnyObject {
+    func productCellDidChangeCompareSelection()
+}
+
 class ProductCollectionCell: UICollectionViewCell {
 
+    weak var delegate: ProductCellDelegate?
     // MARK: - UI Elements
     private let iconImageView = UIImageView()
     private let nameLabel = UILabel()
@@ -21,6 +26,7 @@ class ProductCollectionCell: UICollectionViewCell {
     private var currentImageURL: String?
     private let favoriteButton = UIButton(type: .system)
     private var product: Product?
+    private let compareButton = UIButton(type: .system)
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -112,7 +118,14 @@ class ProductCollectionCell: UICollectionViewCell {
         favoriteButton.addTarget(self, action: #selector(favoriteTapped), for: .touchUpInside)
         favoriteButton.translatesAutoresizingMaskIntoConstraints = false
         
-
+        compareButton.tintColor = AppColors.accent
+        compareButton.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        compareButton.layer.cornerRadius = 16
+        compareButton.clipsToBounds = true
+        compareButton.addTarget(self, action: #selector(compareTapped), for: .touchUpInside)
+        compareButton.translatesAutoresizingMaskIntoConstraints = false
+        
+    
         contentView.addSubview(productImageView)
         contentView.addSubview(nameLabel)
         contentView.addSubview(categoryLabel)
@@ -121,6 +134,7 @@ class ProductCollectionCell: UICollectionViewCell {
         contentView.addSubview(badgeLabel)
         contentView.addSubview(matchLabel)
         contentView.addSubview(favoriteButton)
+        contentView.addSubview(compareButton)
     }
 
     private func setupConstraints() {
@@ -162,6 +176,11 @@ class ProductCollectionCell: UICollectionViewCell {
             favoriteButton.trailingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: -8),
             favoriteButton.widthAnchor.constraint(equalToConstant: 32),
             favoriteButton.heightAnchor.constraint(equalToConstant: 32),
+            
+            compareButton.bottomAnchor.constraint(equalTo: productImageView.bottomAnchor, constant: -8),
+            compareButton.trailingAnchor.constraint(equalTo: favoriteButton.leadingAnchor, constant: -8),
+            compareButton.widthAnchor.constraint(equalToConstant: 32),
+            compareButton.heightAnchor.constraint(equalToConstant: 32),
         ])
     }
     
@@ -178,6 +197,32 @@ class ProductCollectionCell: UICollectionViewCell {
         FavoritesManager.shared.toggle(product)
         updateFavoriteButton()
     }
+    
+    private func updateCompareButton() {
+        guard let product else { return }
+        let isSelected = CompareManager.shared.isSelected(product)
+        let imageName = isSelected ? "checkmark.square.fill" : "plus.square.on.square"
+        let config = UIImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+        compareButton.setImage(UIImage(systemName: imageName, withConfiguration: config), for: .normal)
+    }
+
+    @objc private func compareTapped() {
+        guard let product else { return }
+
+        let added = CompareManager.shared.toggle(product)
+        if !added {
+            shake(compareButton)
+        }
+        updateCompareButton()
+        delegate?.productCellDidChangeCompareSelection()
+    }
+
+    private func shake(_ view: UIView) {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.duration = 0.3
+        animation.values = [-6, 6, -4, 4, 0]
+        view.layer.add(animation, forKey: "shake")
+    }
 
     // MARK: - Configure
     func configure(with product: Product) {
@@ -186,7 +231,7 @@ class ProductCollectionCell: UICollectionViewCell {
         categoryLabel.text = product.category.uppercased()
         priceLabel.text = product.price
         iconImageView.image = UIImage(systemName: CategoryIcon.iconName(for: product.category))
-        
+        updateCompareButton()
         if let rating = product.rating {
             ratingLabel.text = "★ \(rating)"
         } else {
